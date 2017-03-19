@@ -8,6 +8,9 @@ const reload = browserSync.reload;
 const notify = require('gulp-notify');
 const plumber = require('gulp-plumber');
 
+
+
+
 gulp.task('js', () => {
     browserify('src/app.js')
         .transform('babelify', {

@@ -20499,13 +20499,31 @@ var _reactDom = require('react-dom');
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
+var _fabricCard = require('./components/fabricCard.js');
+
+var _fabricCard2 = _interopRequireDefault(_fabricCard);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+// Component imports
+
+
+// Initialize Firebase
+var config = {
+	apiKey: "AIzaSyDw2WtTPY0BiO7ay3LVddM-4sErmub8HK0",
+	authDomain: "fabric-locker.firebaseapp.com",
+	databaseURL: "https://fabric-locker.firebaseio.com",
+	storageBucket: "fabric-locker.appspot.com",
+	messagingSenderId: "335409976142"
+};
+firebase.initializeApp(config);
 
 var App = function (_React$Component) {
 	_inherits(App, _React$Component);
@@ -20513,16 +20531,155 @@ var App = function (_React$Component) {
 	function App() {
 		_classCallCheck(this, App);
 
-		return _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).apply(this, arguments));
+		var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this));
+
+		_this.state = {
+			items: [],
+			brand: "",
+			type: "",
+			amount: 0,
+			width: 0,
+			care: ""
+		};
+		_this.showMainForm = _this.showMainForm.bind(_this);
+		_this.addToCard = _this.addToCard.bind(_this);
+		_this.handleChange = _this.handleChange.bind(_this);
+		return _this;
 	}
 
 	_createClass(App, [{
+		key: 'componentDidMount',
+		value: function componentDidMount() {
+			var _this2 = this;
+
+			firebase.database().ref().on('value', function (res) {
+				var userData = res.val();
+				var dataArray = [];
+				for (var objKey in userData) {
+					userData[objKey].key = objKey;
+					dataArray.push(userData[objKey]);
+				}
+				_this2.setState({
+					items: dataArray
+				});
+			});
+		}
+	}, {
+		key: 'handleChange',
+		value: function handleChange(e) {
+			this.setState(_defineProperty({}, e.target.name, e.target.value));
+		}
+	}, {
+		key: 'showMainForm',
+		value: function showMainForm(e) {
+			e.preventDefault();
+			console.log('hi!');
+			//this.mainForm.classList.toggle("showMainForm")
+		}
+	}, {
+		key: 'removeCard',
+		value: function removeCard(fabricCardId) {
+			var dbRef = firebase.database().ref(fabricCardId);
+			dbRef.remove();
+			console.log("bye!");
+		}
+	}, {
+		key: 'addToCard',
+		value: function addToCard(e) {
+			e.preventDefault();
+			var items = {
+				brand: this.state.brand,
+				type: this.state.type,
+				amount: this.state.amount,
+				width: this.state.width,
+				care: this.state.care
+			};
+			var dbRef = firebase.database().ref();
+			dbRef.push(items);
+		}
+	}, {
 		key: 'render',
 		value: function render() {
+			var _this3 = this;
+
 			return _react2.default.createElement(
 				'div',
 				null,
-				'Heyyyyy!'
+				_react2.default.createElement(
+					'header',
+					null,
+					_react2.default.createElement(
+						'h2',
+						null,
+						'Fabric Locker'
+					),
+					_react2.default.createElement(
+						'nav',
+						null,
+						_react2.default.createElement(
+							'a',
+							{ href: '#', onClick: this.showMainForm },
+							_react2.default.createElement('i', { className: 'fa fa-plus-circle', 'aria-hidden': 'true' }),
+							'Add Fabric'
+						)
+					)
+				),
+				_react2.default.createElement(
+					'section',
+					null,
+					_react2.default.createElement(
+						'form',
+						{ className: 'mainForm', onSubmit: this.addToCard },
+						_react2.default.createElement(
+							'label',
+							{ htmlFor: 'brand' },
+							'Brand:'
+						),
+						_react2.default.createElement('input', { type: 'text', name: 'brand', ref: function ref(_ref) {
+								return _this3.brandText = _ref;
+							}, value: this.state.brand, onChange: this.handleChange }),
+						_react2.default.createElement(
+							'label',
+							{ htmlFor: 'type' },
+							'Type:'
+						),
+						_react2.default.createElement('input', { type: 'text', ref: function ref(_ref2) {
+								return _this3.typeText = _ref2;
+							}, name: 'type', value: this.state.type, onChange: this.handleChange }),
+						_react2.default.createElement(
+							'label',
+							{ htmlFor: 'amount' },
+							'Amount:'
+						),
+						_react2.default.createElement('input', { type: 'number', ref: function ref(_ref3) {
+								return _this3.amountNumber = _ref3;
+							}, name: 'amount', value: this.state.amount, onChange: this.handleChange }),
+						_react2.default.createElement(
+							'label',
+							{ htmlFor: 'width' },
+							'Width:'
+						),
+						_react2.default.createElement('input', { type: 'number', ref: function ref(_ref4) {
+								return _this3.widthNumber = _ref4;
+							}, name: 'width', value: this.state.width, onChange: this.handleChange }),
+						_react2.default.createElement(
+							'label',
+							{ htmlFor: 'care' },
+							'Care Instructions:'
+						),
+						_react2.default.createElement('textarea', { name: 'care', ref: function ref(_ref5) {
+								return _this3.careText = _ref5;
+							}, value: this.state.care, onChange: this.handleChange }),
+						_react2.default.createElement('input', { type: 'submit', value: 'Add a Fabric', onSubmit: this.addToCard })
+					)
+				),
+				_react2.default.createElement(
+					'div',
+					null,
+					this.state.items.map(function (item, i) {
+						return _react2.default.createElement(_fabricCard2.default, { data: item, key: 'item-' + i, removeCard: _this3.removeCard });
+					})
+				)
 			);
 		}
 	}]);
@@ -20532,4 +20689,137 @@ var App = function (_React$Component) {
 
 _reactDom2.default.render(_react2.default.createElement(App, null), document.getElementById('app'));
 
-},{"react":177,"react-dom":26}]},{},[178]);
+},{"./components/fabricCard.js":179,"react":177,"react-dom":26}],179:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = require("react");
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var FabricCard = function (_React$Component) {
+	_inherits(FabricCard, _React$Component);
+
+	function FabricCard() {
+		_classCallCheck(this, FabricCard);
+
+		var _this = _possibleConstructorReturn(this, (FabricCard.__proto__ || Object.getPrototypeOf(FabricCard)).call(this));
+
+		_this.state = {
+			edit: false,
+			card: {}
+		};
+		_this.saveChanges = _this.saveChanges.bind(_this);
+		return _this;
+	}
+
+	_createClass(FabricCard, [{
+		key: "saveChanges",
+		value: function saveChanges(e) {
+			e.preventDefault();
+			var dbRef = firebase.database().ref(this.props.data.key);
+
+			// Possibly need a reference here?
+			dbRef.update({
+				brand: this.brandText.value,
+				type: this.typeText.value,
+				amount: this.amountNumber.value,
+				width: this.widthNumber.value,
+				care: this.careText.value
+			});
+
+			this.setState({
+				edit: false
+			});
+		}
+	}, {
+		key: "render",
+		value: function render() {
+			var _this2 = this;
+
+			var editCard = _react2.default.createElement(
+				"div",
+				null,
+				_react2.default.createElement(
+					"h3",
+					null,
+					this.props.data.brand
+				),
+				_react2.default.createElement(
+					"h3",
+					null,
+					this.props.data.type
+				),
+				_react2.default.createElement(
+					"h3",
+					null,
+					this.props.data.amount
+				),
+				_react2.default.createElement(
+					"h3",
+					null,
+					this.props.data.width
+				),
+				_react2.default.createElement(
+					"h3",
+					null,
+					this.props.data.care
+				)
+			);
+
+			if (this.state.edit) {
+				editCard = _react2.default.createElement(
+					"form",
+					{ onSubmit: this.saveChanges },
+					_react2.default.createElement("input", { type: "text", "default": this.props.card.brand, name: "brand", ref: function ref(_ref) {
+							return _this2.brandText = _ref;
+						} }),
+					_react2.default.createElement("input", { type: "text", "default": this.props.card.type, name: "type", ref: function ref(_ref2) {
+							return _this2.typeText = _ref2;
+						} }),
+					_react2.default.createElement("input", { type: "number", "default": this.props.card.amount, name: "amount", ref: function ref(_ref3) {
+							return _this2.amountNumber = _ref3;
+						} }),
+					_react2.default.createElement("input", { type: "number", "default": this.props.card.number, name: "width", ref: function ref(_ref4) {
+							return _this2.widthNumber = _ref4;
+						} }),
+					_react2.default.createElement("input", { type: "text", "default": this.props.card.care, name: "care", ref: function ref(_ref5) {
+							return _this2.careText = _ref5;
+						} }),
+					_react2.default.createElement("input", { type: "submit", value: "done editing!" })
+				);
+			}
+
+			return _react2.default.createElement(
+				"div",
+				null,
+				_react2.default.createElement("i", { className: "fa fa-edit", onClick: function onClick() {
+						return _this2.setState({ edit: true });
+					} }),
+				_react2.default.createElement("i", { className: "fa fa-times", onClick: function onClick() {
+						return _this2.props.removeCard(_this2.props.card.key);
+					} }),
+				editCard
+			);
+		}
+	}]);
+
+	return FabricCard;
+}(_react2.default.Component);
+
+exports.default = FabricCard;
+
+},{"react":177}]},{},[178]);

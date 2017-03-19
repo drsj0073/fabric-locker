@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Form/Firebase</title>
+</head>
+<body>
+
+	<h1 id="bigOne"></h1>
+	
+	<form id="mainForm">
+		<h1>Firebase Form</h1>
+		<label for="Brand">Brand:</label>
+		<input type="text" name="brand">
+
+		<label for="type">Type:</label>
+		<input type="text" name="type">
+
+		<label for="care">Care Instructions:</label>
+		<input type="text" name="care">
+
+		<button id="sendInfoBtn"></button>
+	</form>
+
+
+
+
+
+
+<script src="https://www.gstatic.com/firebasejs/3.7.2/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyDp16fBi38_ibD8EB4fQPW2Fm0--etjLlQ",
+    authDomain: "form-df892.firebaseapp.com",
+    databaseURL: "https://form-df892.firebaseio.com",
+    storageBucket: "form-df892.appspot.com",
+    messagingSenderId: "770767275419"
+  };
+  firebase.initializeApp(config);
+
+var bigOne = document.getElementById('bigOne');
+var dbRef = firebase.database().ref().child('text');
+dbRef.on('value', snap => bigOne.innerText = snap.val());
+
+
+
+</script>
+</body>
+</html>
