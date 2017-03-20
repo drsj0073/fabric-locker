@@ -14,7 +14,6 @@ export default class FabricCard extends React.Component {
 		e.preventDefault();
 		const dbRef = firebase.database().ref(this.props.data.key);
 
-			// Possibly need a reference here?
 		dbRef.update({
 			brand: this.brandText.value,
 			type: this.typeText.value,
@@ -24,35 +23,35 @@ export default class FabricCard extends React.Component {
 		});
 
 		this.setState({
-			edit: false
+			editing: false
 		});
 	}
 
 	render() {
 		let editCard = (
-			<div>
+			<form>
 				<h3>{this.props.data.brand}</h3> 
 				<h3>{this.props.data.type}</h3>
 				<h3>{this.props.data.amount}</h3>
 				<h3>{this.props.data.width}</h3>
 				<h3>{this.props.data.care}</h3>
-			</div>
+			</form>
 		)
 
-		if (this.state.edit) {
+		if (this.state.editing) {
 			editCard = (
 				<form onSubmit={this.saveChanges}>
 					
-					<input type="text" default={this.props.card.brand} name="brand" ref={ref => this.brandText = ref} />
+					<input type="text" defaultValue={this.props.data.brand} name="brand" ref={ref => this.brandText = ref} />
 
-					<input type="text" default={this.props.card.type} name="type" ref={ref => this.typeText = ref} />
+					<input type="text" defaultValue={this.props.data.type} name="type" ref={ref => this.typeText = ref} />
 
-					<input type="number" default={this.props.card.amount} name="amount" ref={ref => this.amountNumber = ref} />
+					<input type="number" defaultValue={this.props.data.amount} name="amount" ref={ref => this.amountNumber = ref} />
 
-					<input type="number" default={this.props.card.number} name="width" ref={ref => this.widthNumber = ref} />
+					<input type="number" defaultValue={this.props.data.number} name="width" ref={ref => this.widthNumber = ref} />
 
-					<input type="text" default={this.props.card.care} name="care" ref={ref => this.careText = ref} />
-					
+					<input type="text" defaultValue={this.props.data.care} name="care" ref={ref => this.careText = ref} />
+
 
 					<input type="submit" value="done editing!" />
 				</form>
@@ -62,11 +61,12 @@ export default class FabricCard extends React.Component {
 
 		return (
 			<div>
-				<i className="fa fa-edit" onClick={() => this.setState({edit: true})}></i>
+				<i className="fa fa-edit" onClick={() => this.setState({editing: true})}></i>
 
-				<i className="fa fa-times" onClick={() => this.props.removeCard(this.props.card.key)}></i>
+				<i className="fa fa-times" onClick={() => this.props.removeCard(this.props.data.key)}></i>
 
 				{editCard}
+				<img className="cardPhoto" src={`${this.props.data.photo}`} />
 			</div>
 		)
 	}

@@ -1,7 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 // Component imports
+import Header from './components/header.js';
 import FabricCard from './components/fabricCard.js';
+
 
   // Initialize Firebase
   const config = {
@@ -24,24 +26,34 @@ class App extends React.Component {
 			width: 0,
 			care: ""
 		}
+
 		this.showMainForm = this.showMainForm.bind(this);
 		this.addToCard = this.addToCard.bind(this);
 		this.handleChange = this.handleChange.bind(this);
+		this.photo = this.photo.bind(this);
 	}
 
 	componentDidMount() {
-		firebase.database().ref().on('value', (res) => {
-			const userData = res.val();
-			const dataArray = [];
-			for (let objKey in userData) {
-				userData[objKey].key = objKey;
-				dataArray.push(userData[objKey])
+		firebase.auth().onAuthStateChanged((user) => {
+			console.log("userrr", user);
+			if(user) {
+				firebase.database().ref().on('value', (res) => {
+					const userData = res.val();
+					const dataArray = [];
+					for (let objKey in userData) {
+						userData[objKey].key = objKey;
+						dataArray.push(userData[objKey])
+					}
+					this.setState ({
+						items: dataArray
+					});
+				});
 			}
-			this.setState ({
-				items: dataArray
-			});
 		});
+
 	}
+
+	// ********** Main Form ***********
 
 	handleChange(e) {
 		this.setState({
@@ -54,11 +66,15 @@ class App extends React.Component {
 		//this.mainForm.classList.toggle("showMainForm")
 	}
 
+	// Delete a Card
+
 	removeCard(fabricCardId) {
 		const dbRef = firebase.database().ref(fabricCardId);
 		dbRef.remove();
 		console.log("bye!");
 	}
+
+	// Add a Card
 
 	addToCard(e) {
 		e.preventDefault();
@@ -67,47 +83,73 @@ class App extends React.Component {
 			type: this.state.type,
  			amount: this.state.amount,
 			width: this.state.width,
-			care: this.state.care
+			care: this.state.care,
+			photo: this.state.photo
 		}
 		const dbRef = firebase.database().ref();
 		dbRef.push(items)
+
+		this.setState({
+			brand: '',
+			type: '',
+			amount: '',
+			width: '',
+			care: '',
+			
+		})
 	}
+
+	photo(e) {
+        let file = e.target.files[0];
+        let storageRef = firebase.storage().ref('images/' + file.name);
+        let task = storageRef.put(file)
+        .then(() => {
+            let urlObject = storageRef.getDownloadURL().then((data) => {
+                this.setState ({
+                    photo: data
+                })
+            })
+        });
+    }
 
 
 	render() {
+
 		return (
 			<div>
-				<header>
-					<h2>Fabric Locker</h2>
-					<nav>
-						<a href='#' onClick={this.showMainForm}><i className="fa fa-plus-circle" aria-hidden="true"></i>Add Fabric</a>
-					</nav>
-				</header>
+				<Header />
 				<section>
+					<h2>Enter Your Fabric</h2>
 					<form className="mainForm" onSubmit={this.addToCard}>
 					  	<label htmlFor="brand">Brand:</label>
-					    <input type="text" name="brand" ref={ref => this.brandText = ref} value={this.state.brand} onChange={this.handleChange}/>
+					    <input type="text" name="brand" value={this.state.brand} onChange={this.handleChange}/>
 
 					  	<label htmlFor="type">Type:</label>
-					   	<input type="text" ref={ref => this.typeText = ref} name="type" value={this.state.type} onChange={this.handleChange}/>
+					   	<input type="text" name="type" value={this.state.type} onChange={this.handleChange}/>
 					  	
 					  	<label htmlFor="amount">Amount:</label>
-					   	<input type="number" ref={ref => this.amountNumber = ref} name="amount" value={this.state.amount} onChange={this.handleChange} />
+					   	<input type="number" name="amount" value={this.state.amount} onChange={this.handleChange} />
 
 					 	<label htmlFor="width">Width:</label>
-					    <input type="number" ref={ref => this.widthNumber = ref} name="width" value={this.state.width} onChange={this.handleChange}/>
+					    <input type="number" name="width" value={this.state.width} onChange={this.handleChange}/>
 					  
 					  	<label htmlFor="care">Care Instructions:</label>
-					    <textarea name="care" ref={ref => this.careText = ref} value={this.state.care} onChange={this.handleChange}></textarea>
+					    <textarea name="care" value={this.state.care} onChange={this.handleChange}></textarea>
+
+					  
+					    <input type='file' accept='image/*' id='filebutton' onChange={this.photo} />
+
+
 
 					  <input type="submit" value="Add a Fabric" onSubmit={this.addToCard} />
 					</form>
 				</section>
-					<div>
-						{this.state.items.map((item, i) => {
-							return <FabricCard data={item} key={`item-${i}`} removeCard={this.removeCard} />
-						})}
-					</div>
+
+				<div>
+					{this.state.items.map((item, i) => {
+						return <FabricCard data={item} key={`item-${i}`} removeCard={this.removeCard} />
+					})}
+				</div>
 			</div>	
 		)
 	}

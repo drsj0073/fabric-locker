@@ -20499,6 +20499,10 @@ var _reactDom = require('react-dom');
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
+var _header = require('./components/header.js');
+
+var _header2 = _interopRequireDefault(_header);
+
 var _fabricCard = require('./components/fabricCard.js');
 
 var _fabricCard2 = _interopRequireDefault(_fabricCard);
@@ -20541,9 +20545,11 @@ var App = function (_React$Component) {
 			width: 0,
 			care: ""
 		};
+
 		_this.showMainForm = _this.showMainForm.bind(_this);
 		_this.addToCard = _this.addToCard.bind(_this);
 		_this.handleChange = _this.handleChange.bind(_this);
+		_this.photo = _this.photo.bind(_this);
 		return _this;
 	}
 
@@ -20552,18 +20558,26 @@ var App = function (_React$Component) {
 		value: function componentDidMount() {
 			var _this2 = this;
 
-			firebase.database().ref().on('value', function (res) {
-				var userData = res.val();
-				var dataArray = [];
-				for (var objKey in userData) {
-					userData[objKey].key = objKey;
-					dataArray.push(userData[objKey]);
+			firebase.auth().onAuthStateChanged(function (user) {
+				console.log("userrr", user);
+				if (user) {
+					firebase.database().ref().on('value', function (res) {
+						var userData = res.val();
+						var dataArray = [];
+						for (var objKey in userData) {
+							userData[objKey].key = objKey;
+							dataArray.push(userData[objKey]);
+						}
+						_this2.setState({
+							items: dataArray
+						});
+					});
 				}
-				_this2.setState({
-					items: dataArray
-				});
 			});
 		}
+
+		// ********** Main Form ***********
+
 	}, {
 		key: 'handleChange',
 		value: function handleChange(e) {
@@ -20576,6 +20590,9 @@ var App = function (_React$Component) {
 			console.log('hi!');
 			//this.mainForm.classList.toggle("showMainForm")
 		}
+
+		// Delete a Card
+
 	}, {
 		key: 'removeCard',
 		value: function removeCard(fabricCardId) {
@@ -20583,6 +20600,9 @@ var App = function (_React$Component) {
 			dbRef.remove();
 			console.log("bye!");
 		}
+
+		// Add a Card
+
 	}, {
 		key: 'addToCard',
 		value: function addToCard(e) {
@@ -20592,41 +20612,53 @@ var App = function (_React$Component) {
 				type: this.state.type,
 				amount: this.state.amount,
 				width: this.state.width,
-				care: this.state.care
+				care: this.state.care,
+				photo: this.state.photo
 			};
 			var dbRef = firebase.database().ref();
 			dbRef.push(items);
+
+			this.setState({
+				brand: '',
+				type: '',
+				amount: '',
+				width: '',
+				care: ''
+
+			});
+		}
+	}, {
+		key: 'photo',
+		value: function photo(e) {
+			var _this3 = this;
+
+			var file = e.target.files[0];
+			var storageRef = firebase.storage().ref('images/' + file.name);
+			var task = storageRef.put(file).then(function () {
+				var urlObject = storageRef.getDownloadURL().then(function (data) {
+					_this3.setState({
+						photo: data
+					});
+				});
+			});
 		}
 	}, {
 		key: 'render',
 		value: function render() {
-			var _this3 = this;
+			var _this4 = this;
 
 			return _react2.default.createElement(
 				'div',
 				null,
+				_react2.default.createElement(_header2.default, null),
 				_react2.default.createElement(
-					'header',
+					'section',
 					null,
 					_react2.default.createElement(
 						'h2',
 						null,
-						'Fabric Locker'
+						'Enter Your Fabric'
 					),
-					_react2.default.createElement(
-						'nav',
-						null,
-						_react2.default.createElement(
-							'a',
-							{ href: '#', onClick: this.showMainForm },
-							_react2.default.createElement('i', { className: 'fa fa-plus-circle', 'aria-hidden': 'true' }),
-							'Add Fabric'
-						)
-					)
-				),
-				_react2.default.createElement(
-					'section',
-					null,
 					_react2.default.createElement(
 						'form',
 						{ className: 'mainForm', onSubmit: this.addToCard },
@@ -20635,41 +20667,32 @@ var App = function (_React$Component) {
 							{ htmlFor: 'brand' },
 							'Brand:'
 						),
-						_react2.default.createElement('input', { type: 'text', name: 'brand', ref: function ref(_ref) {
-								return _this3.brandText = _ref;
-							}, value: this.state.brand, onChange: this.handleChange }),
+						_react2.default.createElement('input', { type: 'text', name: 'brand', value: this.state.brand, onChange: this.handleChange }),
 						_react2.default.createElement(
 							'label',
 							{ htmlFor: 'type' },
 							'Type:'
 						),
-						_react2.default.createElement('input', { type: 'text', ref: function ref(_ref2) {
-								return _this3.typeText = _ref2;
-							}, name: 'type', value: this.state.type, onChange: this.handleChange }),
+						_react2.default.createElement('input', { type: 'text', name: 'type', value: this.state.type, onChange: this.handleChange }),
 						_react2.default.createElement(
 							'label',
 							{ htmlFor: 'amount' },
 							'Amount:'
 						),
-						_react2.default.createElement('input', { type: 'number', ref: function ref(_ref3) {
-								return _this3.amountNumber = _ref3;
-							}, name: 'amount', value: this.state.amount, onChange: this.handleChange }),
+						_react2.default.createElement('input', { type: 'number', name: 'amount', value: this.state.amount, onChange: this.handleChange }),
 						_react2.default.createElement(
 							'label',
 							{ htmlFor: 'width' },
 							'Width:'
 						),
-						_react2.default.createElement('input', { type: 'number', ref: function ref(_ref4) {
-								return _this3.widthNumber = _ref4;
-							}, name: 'width', value: this.state.width, onChange: this.handleChange }),
+						_react2.default.createElement('input', { type: 'number', name: 'width', value: this.state.width, onChange: this.handleChange }),
 						_react2.default.createElement(
 							'label',
 							{ htmlFor: 'care' },
 							'Care Instructions:'
 						),
-						_react2.default.createElement('textarea', { name: 'care', ref: function ref(_ref5) {
-								return _this3.careText = _ref5;
-							}, value: this.state.care, onChange: this.handleChange }),
+						_react2.default.createElement('textarea', { name: 'care', value: this.state.care, onChange: this.handleChange }),
+						_react2.default.createElement('input', { type: 'file', accept: 'image/*', id: 'filebutton', onChange: this.photo }),
 						_react2.default.createElement('input', { type: 'submit', value: 'Add a Fabric', onSubmit: this.addToCard })
 					)
 				),
@@ -20677,7 +20700,7 @@ var App = function (_React$Component) {
 					'div',
 					null,
 					this.state.items.map(function (item, i) {
-						return _react2.default.createElement(_fabricCard2.default, { data: item, key: 'item-' + i, removeCard: _this3.removeCard });
+						return _react2.default.createElement(_fabricCard2.default, { data: item, key: 'item-' + i, removeCard: _this4.removeCard });
 					})
 				)
 			);
@@ -20689,7 +20712,7 @@ var App = function (_React$Component) {
 
 _reactDom2.default.render(_react2.default.createElement(App, null), document.getElementById('app'));
 
-},{"./components/fabricCard.js":179,"react":177,"react-dom":26}],179:[function(require,module,exports){
+},{"./components/fabricCard.js":179,"./components/header.js":180,"react":177,"react-dom":26}],179:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -20732,7 +20755,6 @@ var FabricCard = function (_React$Component) {
 			e.preventDefault();
 			var dbRef = firebase.database().ref(this.props.data.key);
 
-			// Possibly need a reference here?
 			dbRef.update({
 				brand: this.brandText.value,
 				type: this.typeText.value,
@@ -20742,7 +20764,7 @@ var FabricCard = function (_React$Component) {
 			});
 
 			this.setState({
-				edit: false
+				editing: false
 			});
 		}
 	}, {
@@ -20751,7 +20773,7 @@ var FabricCard = function (_React$Component) {
 			var _this2 = this;
 
 			var editCard = _react2.default.createElement(
-				"div",
+				"form",
 				null,
 				_react2.default.createElement(
 					"h3",
@@ -20780,23 +20802,23 @@ var FabricCard = function (_React$Component) {
 				)
 			);
 
-			if (this.state.edit) {
+			if (this.state.editing) {
 				editCard = _react2.default.createElement(
 					"form",
 					{ onSubmit: this.saveChanges },
-					_react2.default.createElement("input", { type: "text", "default": this.props.card.brand, name: "brand", ref: function ref(_ref) {
+					_react2.default.createElement("input", { type: "text", defaultValue: this.props.data.brand, name: "brand", ref: function ref(_ref) {
 							return _this2.brandText = _ref;
 						} }),
-					_react2.default.createElement("input", { type: "text", "default": this.props.card.type, name: "type", ref: function ref(_ref2) {
+					_react2.default.createElement("input", { type: "text", defaultValue: this.props.data.type, name: "type", ref: function ref(_ref2) {
 							return _this2.typeText = _ref2;
 						} }),
-					_react2.default.createElement("input", { type: "number", "default": this.props.card.amount, name: "amount", ref: function ref(_ref3) {
+					_react2.default.createElement("input", { type: "number", defaultValue: this.props.data.amount, name: "amount", ref: function ref(_ref3) {
 							return _this2.amountNumber = _ref3;
 						} }),
-					_react2.default.createElement("input", { type: "number", "default": this.props.card.number, name: "width", ref: function ref(_ref4) {
+					_react2.default.createElement("input", { type: "number", defaultValue: this.props.data.number, name: "width", ref: function ref(_ref4) {
 							return _this2.widthNumber = _ref4;
 						} }),
-					_react2.default.createElement("input", { type: "text", "default": this.props.card.care, name: "care", ref: function ref(_ref5) {
+					_react2.default.createElement("input", { type: "text", defaultValue: this.props.data.care, name: "care", ref: function ref(_ref5) {
 							return _this2.careText = _ref5;
 						} }),
 					_react2.default.createElement("input", { type: "submit", value: "done editing!" })
@@ -20807,12 +20829,13 @@ var FabricCard = function (_React$Component) {
 				"div",
 				null,
 				_react2.default.createElement("i", { className: "fa fa-edit", onClick: function onClick() {
-						return _this2.setState({ edit: true });
+						return _this2.setState({ editing: true });
 					} }),
 				_react2.default.createElement("i", { className: "fa fa-times", onClick: function onClick() {
-						return _this2.props.removeCard(_this2.props.card.key);
+						return _this2.props.removeCard(_this2.props.data.key);
 					} }),
-				editCard
+				editCard,
+				_react2.default.createElement("img", { className: "cardPhoto", src: "" + this.props.data.photo })
 			);
 		}
 	}]);
@@ -20821,5 +20844,242 @@ var FabricCard = function (_React$Component) {
 }(_react2.default.Component);
 
 exports.default = FabricCard;
+
+},{"react":177}],180:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Header = function (_React$Component) {
+	_inherits(Header, _React$Component);
+
+	function Header() {
+		_classCallCheck(this, Header);
+
+		var _this = _possibleConstructorReturn(this, (Header.__proto__ || Object.getPrototypeOf(Header)).call(this));
+
+		_this.state = {
+			formToShow: '',
+			email: '',
+			password: '',
+			confirm: ''
+		};
+		_this.formToShow = _this.formToShow.bind(_this);
+		_this.createUser = _this.createUser.bind(_this);
+		_this.loginUser = _this.loginUser.bind(_this);
+		_this.handleChange = _this.handleChange.bind(_this);
+
+		return _this;
+	}
+
+	_createClass(Header, [{
+		key: 'formToShow',
+		value: function formToShow(e) {
+			e.preventDefault();
+			this.setState({
+				formToShow: e.target.className
+			});
+		}
+	}, {
+		key: 'handleChange',
+		value: function handleChange(e) {
+			this.setState(_defineProperty({}, e.target.name, e.target.value));
+		}
+
+		// ********** Create Account Form ***********
+
+	}, {
+		key: 'createUser',
+		value: function createUser(e) {
+			e.preventDefault();
+
+			var email = this.createEmail.value;
+			var password = this.createPassword.value;
+			var confirm = this.confirmPassword.value;
+
+			this.createEmail.value = "";
+			this.createPassword.value = "";
+			this.confirmPassword.value = "";
+
+			if (password === confirm) {
+				firebase.auth().createUserWithEmailAndPassword(email, password).then(function (data) {
+					console.log(data);
+				}).catch(function (error) {
+					console.log(error.code);
+					console.log(error.message);
+				});
+			}
+		}
+
+		// ********** Login Form ***********
+
+	}, {
+		key: 'loginUser',
+		value: function loginUser(e) {
+			e.preventDefault();
+			var email = this.userEmail.value;
+			var password = this.userPassword.value;
+
+			this.userEmail.value = '';
+			this.userPassword.value = '';
+
+			firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password).then(function (data) {
+				console.log(data);
+			});
+		}
+	}, {
+		key: 'render',
+		value: function render() {
+			var _this2 = this;
+
+			var loginForm = '';
+			if (this.state.formToShow === 'createUser') {
+				loginForm = _react2.default.createElement(
+					'div',
+					null,
+					_react2.default.createElement(
+						'form',
+						{ onSubmit: this.createUser, className: 'userForm' },
+						_react2.default.createElement(
+							'h2',
+							null,
+							'Create Account'
+						),
+						_react2.default.createElement(
+							'label',
+							{ htmlFor: 'createEmail' },
+							'Email:'
+						),
+						_react2.default.createElement('input', { type: 'email', name: 'createEmail', onChange: this.handleChange }),
+						_react2.default.createElement(
+							'label',
+							{ htmlFor: 'createPassword' },
+							'Password:'
+						),
+						_react2.default.createElement('input', { type: 'password', name: 'createPassword', onChange: this.handleChange }),
+						_react2.default.createElement(
+							'label',
+							{ htmlFor: 'confirmPassword' },
+							'Confirm Password:'
+						),
+						_react2.default.createElement('input', { type: 'password', name: 'confirmPassword', onChange: this.handleChange }),
+						_react2.default.createElement(
+							'button',
+							null,
+							'Sign Up'
+						)
+					)
+				);
+			} else if (this.state.formToShow === 'loginUser') {
+				loginForm = _react2.default.createElement(
+					'div',
+					null,
+					_react2.default.createElement(
+						'form',
+						{ onSubmit: this.loginUser, className: 'userForm' },
+						_react2.default.createElement(
+							'h2',
+							null,
+							'Sign In'
+						),
+						_react2.default.createElement(
+							'label',
+							{ htmlFor: 'email' },
+							'Email:'
+						),
+						_react2.default.createElement('input', { type: 'email', name: 'email', onChange: this.handleChange, ref: function ref(_ref) {
+								return _this2.userEmail = _ref;
+							} }),
+						_react2.default.createElement(
+							'label',
+							{ htmlFor: 'password' },
+							'Password:'
+						),
+						_react2.default.createElement('input', { type: 'password', name: 'password', onChange: this.handleChange, ref: function ref(_ref2) {
+								return _this2.userPassword = _ref2;
+							} }),
+						_react2.default.createElement(
+							'button',
+							null,
+							'Sign In'
+						)
+					)
+				);
+			}
+
+			return _react2.default.createElement(
+				'div',
+				null,
+				_react2.default.createElement(
+					'header',
+					null,
+					_react2.default.createElement(
+						'h2',
+						null,
+						'Fabric Locker'
+					),
+					_react2.default.createElement(
+						'nav',
+						null,
+						_react2.default.createElement(
+							'ul',
+							null,
+							_react2.default.createElement(
+								'li',
+								null,
+								_react2.default.createElement(
+									'a',
+									{ href: '', onClick: this.showMainForm },
+									'Add Fabric'
+								)
+							),
+							_react2.default.createElement(
+								'li',
+								null,
+								_react2.default.createElement(
+									'a',
+									{ href: '', className: 'createUser', onClick: this.formToShow },
+									' Create Account'
+								)
+							),
+							_react2.default.createElement(
+								'li',
+								null,
+								_react2.default.createElement(
+									'a',
+									{ href: '', className: 'loginUser', onClick: this.formToShow },
+									' Sign In'
+								)
+							)
+						)
+					)
+				),
+				loginForm
+			);
+		}
+	}]);
+
+	return Header;
+}(_react2.default.Component);
+
+exports.default = Header;
 
 },{"react":177}]},{},[178]);
