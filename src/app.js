@@ -71,7 +71,6 @@ class App extends React.Component {
 	removeCard(fabricCardId) {
 		const dbRef = firebase.database().ref(fabricCardId);
 		dbRef.remove();
-		console.log("bye!");
 	}
 
 	// Add a Card

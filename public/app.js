@@ -20598,7 +20598,6 @@ var App = function (_React$Component) {
 		value: function removeCard(fabricCardId) {
 			var dbRef = firebase.database().ref(fabricCardId);
 			dbRef.remove();
-			console.log("bye!");
 		}
 
 		// Add a Card
@@ -20886,7 +20885,7 @@ var Header = function (_React$Component) {
 		_this.createUser = _this.createUser.bind(_this);
 		_this.loginUser = _this.loginUser.bind(_this);
 		_this.handleChange = _this.handleChange.bind(_this);
-
+		_this.signOut = _this.signOut.bind(_this);
 		return _this;
 	}
 
@@ -20902,6 +20901,16 @@ var Header = function (_React$Component) {
 		key: 'handleChange',
 		value: function handleChange(e) {
 			this.setState(_defineProperty({}, e.target.name, e.target.value));
+		}
+	}, {
+		key: 'signOut',
+		value: function signOut(e) {
+			e.preventDefault();
+			firebase.auth().signOut().then(function () {
+				console.log('Signed Out');
+			}, function (error) {
+				console.error('Sign Out Error', error);
+			});
 		}
 
 		// ********** Create Account Form ***********
@@ -21067,6 +21076,15 @@ var Header = function (_React$Component) {
 									'a',
 									{ href: '', className: 'loginUser', onClick: this.formToShow },
 									' Sign In'
+								)
+							),
+							_react2.default.createElement(
+								'li',
+								null,
+								_react2.default.createElement(
+									'a',
+									{ href: '', className: 'signOut', onClick: this.signOut },
+									' Sign Out'
 								)
 							)
 						)

@@ -13,7 +13,7 @@ export default class Header extends React.Component {
 		this.createUser = this.createUser.bind(this);
 		this.loginUser = this.loginUser.bind(this);
 		this.handleChange = this.handleChange.bind(this);
-
+		this.signOut = this.signOut.bind(this);
 	}
 
 	formToShow(e) {
@@ -26,6 +26,15 @@ export default class Header extends React.Component {
 	handleChange(e) {
 		this.setState({
 			[e.target.name]: e.target.value
+		});
+	}
+
+	signOut(e) {
+		e.preventDefault();
+		firebase.auth().signOut().then(function() {
+		  console.log('Signed Out');
+		}, function(error) {
+		  console.error('Sign Out Error', error);
 		});
 	}
 
@@ -123,6 +132,7 @@ export default class Header extends React.Component {
 							<li><a href='' onClick={this.showMainForm}>Add Fabric</a></li>
 							<li><a href='' className="createUser" onClick={this.formToShow}> Create Account</a></li>
 							<li><a href='' className="loginUser" onClick={this.formToShow}> Sign In</a></li>
+							<li><a href='' className="signOut" onClick={this.signOut}> Sign Out</a></li>
 						</ul>
 					</nav>
 				</header>

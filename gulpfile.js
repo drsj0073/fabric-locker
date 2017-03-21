@@ -1,4 +1,7 @@
 const gulp = require('gulp');
+const sass = require('gulp-sass');
+const concat = require('gulp-concat');
+const autoprefixer = require('gulp-autoprefixer');
 const babel = require('babelify');
 const browserify = require('browserify');
 const source = require('vinyl-source-stream');
@@ -35,8 +38,19 @@ gulp.task('bs', () => {
     });
 });
 
-
-gulp.task('default', ['js','bs'], () => {
-    gulp.watch('src/**/*.js',['js']);
-    gulp.watch('./public/style.css',reload);
+gulp.task('styles', () => {
+  return gulp.src('./src/styles/**/*.scss')
+    .pipe(sass().on('error', sass.logError))
+    .pipe(autoprefixer('last 2 version', 'safari 5', 'ie 8', 'ie 9', 'opera 12.1'))
+    .pipe(concat('style.css'))
+    .pipe(gulp.dest('./public/styles'))
+    .pipe(reload({stream: true}));
 });
+
+gulp.task('watch', function() {
+  gulp.watch('./src/styles/*.scss', ['styles']);
+  gulp.watch('*.html', reload);
+});
+
+
+gulp.task('default', ['js','bs', 'styles', 'watch'])
