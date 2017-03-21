@@ -1,4 +1,5 @@
 const gulp = require('gulp');
+const browserSync = require('browser-sync');
 const sass = require('gulp-sass');
 const concat = require('gulp-concat');
 const autoprefixer = require('gulp-autoprefixer');
@@ -6,7 +7,6 @@ const babel = require('babelify');
 const browserify = require('browserify');
 const source = require('vinyl-source-stream');
 const buffer = require('vinyl-buffer');
-const browserSync = require('browser-sync');
 const reload = browserSync.reload;
 const notify = require('gulp-notify');
 const plumber = require('gulp-plumber');
@@ -48,7 +48,7 @@ gulp.task('styles', () => {
 });
 
 gulp.task('watch', function() {
-  gulp.watch('./src/styles/*.scss', ['styles']);
+  gulp.watch('./src/styles/**/*.scss', ['styles']);
   gulp.watch('*.html', reload);
 });
 

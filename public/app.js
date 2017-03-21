@@ -20541,8 +20541,8 @@ var App = function (_React$Component) {
 			items: [],
 			brand: "",
 			type: "",
-			amount: 0,
-			width: 0,
+			amount: "",
+			width: "",
 			care: ""
 		};
 
@@ -20655,44 +20655,23 @@ var App = function (_React$Component) {
 					null,
 					_react2.default.createElement(
 						'h2',
-						null,
+						{ className: 'section-title' },
 						'Enter Your Fabric'
 					),
 					_react2.default.createElement(
-						'form',
-						{ className: 'mainForm', onSubmit: this.addToCard },
+						'div',
+						{ className: 'fabric-form__container' },
 						_react2.default.createElement(
-							'label',
-							{ htmlFor: 'brand' },
-							'Brand:'
-						),
-						_react2.default.createElement('input', { type: 'text', name: 'brand', value: this.state.brand, onChange: this.handleChange }),
-						_react2.default.createElement(
-							'label',
-							{ htmlFor: 'type' },
-							'Type:'
-						),
-						_react2.default.createElement('input', { type: 'text', name: 'type', value: this.state.type, onChange: this.handleChange }),
-						_react2.default.createElement(
-							'label',
-							{ htmlFor: 'amount' },
-							'Amount:'
-						),
-						_react2.default.createElement('input', { type: 'number', name: 'amount', value: this.state.amount, onChange: this.handleChange }),
-						_react2.default.createElement(
-							'label',
-							{ htmlFor: 'width' },
-							'Width:'
-						),
-						_react2.default.createElement('input', { type: 'number', name: 'width', value: this.state.width, onChange: this.handleChange }),
-						_react2.default.createElement(
-							'label',
-							{ htmlFor: 'care' },
-							'Care Instructions:'
-						),
-						_react2.default.createElement('textarea', { name: 'care', value: this.state.care, onChange: this.handleChange }),
-						_react2.default.createElement('input', { type: 'file', accept: 'image/*', id: 'filebutton', onChange: this.photo }),
-						_react2.default.createElement('input', { type: 'submit', value: 'Add a Fabric', onSubmit: this.addToCard })
+							'form',
+							{ className: 'fabric-form', onSubmit: this.addToCard },
+							_react2.default.createElement('input', { type: 'text', placeholder: 'Enter a Brand', name: 'brand', value: this.state.brand, onChange: this.handleChange }),
+							_react2.default.createElement('input', { type: 'text', placeholder: 'Enter a Type', name: 'type', value: this.state.type, onChange: this.handleChange }),
+							_react2.default.createElement('input', { type: 'number', placeholder: 'Enter an Amount', name: 'amount', value: this.state.amount, onChange: this.handleChange }),
+							_react2.default.createElement('input', { type: 'number', placeholder: 'Enter a Width', name: 'width', value: this.state.width, onChange: this.handleChange }),
+							_react2.default.createElement('input', { type: 'text', name: 'care', placeholder: 'Enter Care Instructions', value: this.state.care, onChange: this.handleChange }),
+							_react2.default.createElement('input', { type: 'file', accept: 'image/*', id: 'filebutton', onChange: this.photo }),
+							_react2.default.createElement('input', { type: 'submit', className: 'btn btn--pink', value: 'Add a Fabric', onSubmit: this.addToCard })
+						)
 					)
 				),
 				_react2.default.createElement(
@@ -20960,74 +20939,55 @@ var Header = function (_React$Component) {
 			var _this2 = this;
 
 			var loginForm = '';
-			if (this.state.formToShow === 'createUser') {
+			if (this.state.formToShow === 'createUser nav__link-item') {
 				loginForm = _react2.default.createElement(
 					'div',
-					null,
+					{ className: 'userForm__container' },
+					_react2.default.createElement(
+						'h2',
+						{ className: 'section-title' },
+						'Create An Account'
+					),
 					_react2.default.createElement(
 						'form',
 						{ onSubmit: this.createUser, className: 'userForm' },
-						_react2.default.createElement(
-							'h2',
-							null,
-							'Create Account'
-						),
-						_react2.default.createElement(
-							'label',
-							{ htmlFor: 'createEmail' },
-							'Email:'
-						),
-						_react2.default.createElement('input', { type: 'email', name: 'createEmail', onChange: this.handleChange }),
-						_react2.default.createElement(
-							'label',
-							{ htmlFor: 'createPassword' },
-							'Password:'
-						),
-						_react2.default.createElement('input', { type: 'password', name: 'createPassword', onChange: this.handleChange }),
-						_react2.default.createElement(
-							'label',
-							{ htmlFor: 'confirmPassword' },
-							'Confirm Password:'
-						),
-						_react2.default.createElement('input', { type: 'password', name: 'confirmPassword', onChange: this.handleChange }),
+						_react2.default.createElement('input', { type: 'email', placeholder: 'Enter Your Email', name: 'createEmail', onChange: this.handleChange, ref: function ref(_ref) {
+								return _this2.createEmail = _ref;
+							} }),
+						_react2.default.createElement('input', { type: 'password', name: 'createPassword', placeholder: 'Enter Your Password', onChange: this.handleChange, ref: function ref(_ref2) {
+								return _this2.createPassword = _ref2;
+							} }),
+						_react2.default.createElement('input', { type: 'password', name: 'confirmPassword', placeholder: 'Confirm Your Email', onChange: this.handleChange, ref: function ref(_ref3) {
+								return _this2.confirmPassword = _ref3;
+							} }),
 						_react2.default.createElement(
 							'button',
-							null,
+							{ className: 'btn btn--pink' },
 							'Sign Up'
 						)
 					)
 				);
-			} else if (this.state.formToShow === 'loginUser') {
+			} else if (this.state.formToShow === 'loginUser nav__link-item') {
 				loginForm = _react2.default.createElement(
 					'div',
-					null,
+					{ className: 'userForm__container' },
+					_react2.default.createElement(
+						'h2',
+						{ className: 'section-title' },
+						'Login'
+					),
 					_react2.default.createElement(
 						'form',
 						{ onSubmit: this.loginUser, className: 'userForm' },
-						_react2.default.createElement(
-							'h2',
-							null,
-							'Sign In'
-						),
-						_react2.default.createElement(
-							'label',
-							{ htmlFor: 'email' },
-							'Email:'
-						),
-						_react2.default.createElement('input', { type: 'email', name: 'email', onChange: this.handleChange, ref: function ref(_ref) {
-								return _this2.userEmail = _ref;
+						_react2.default.createElement('input', { type: 'email', placeholder: 'Enter Your Email', name: 'email', onChange: this.handleChange, ref: function ref(_ref4) {
+								return _this2.userEmail = _ref4;
 							} }),
-						_react2.default.createElement(
-							'label',
-							{ htmlFor: 'password' },
-							'Password:'
-						),
-						_react2.default.createElement('input', { type: 'password', name: 'password', onChange: this.handleChange, ref: function ref(_ref2) {
-								return _this2.userPassword = _ref2;
+						_react2.default.createElement('input', { type: 'password', placeholder: 'Enter Your Password', name: 'password', onChange: this.handleChange, ref: function ref(_ref5) {
+								return _this2.userPassword = _ref5;
 							} }),
 						_react2.default.createElement(
 							'button',
-							null,
+							{ className: 'btn btn--pink' },
 							'Sign In'
 						)
 					)
@@ -21039,10 +20999,10 @@ var Header = function (_React$Component) {
 				null,
 				_react2.default.createElement(
 					'header',
-					null,
+					{ className: 'main-header' },
 					_react2.default.createElement(
 						'h2',
-						null,
+						{ className: 'main-header__logo' },
 						'Fabric Locker'
 					),
 					_react2.default.createElement(
@@ -21050,13 +21010,13 @@ var Header = function (_React$Component) {
 						null,
 						_react2.default.createElement(
 							'ul',
-							null,
+							{ className: 'nav' },
 							_react2.default.createElement(
 								'li',
 								null,
 								_react2.default.createElement(
 									'a',
-									{ href: '', onClick: this.showMainForm },
+									{ href: '', className: 'nav__link-item', onClick: this.showMainForm },
 									'Add Fabric'
 								)
 							),
@@ -21065,7 +21025,7 @@ var Header = function (_React$Component) {
 								null,
 								_react2.default.createElement(
 									'a',
-									{ href: '', className: 'createUser', onClick: this.formToShow },
+									{ href: '', className: 'createUser nav__link-item', onClick: this.formToShow },
 									' Create Account'
 								)
 							),
@@ -21074,7 +21034,7 @@ var Header = function (_React$Component) {
 								null,
 								_react2.default.createElement(
 									'a',
-									{ href: '', className: 'loginUser', onClick: this.formToShow },
+									{ href: '', className: 'loginUser nav__link-item', onClick: this.formToShow },
 									' Sign In'
 								)
 							),
@@ -21083,7 +21043,7 @@ var Header = function (_React$Component) {
 								null,
 								_react2.default.createElement(
 									'a',
-									{ href: '', className: 'signOut', onClick: this.signOut },
+									{ href: '', className: 'signOut nav__link-item', onClick: this.signOut },
 									' Sign Out'
 								)
 							)

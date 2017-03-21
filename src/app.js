@@ -22,8 +22,8 @@ class App extends React.Component {
 			items: [],
 			brand: "",
 			type: "",
-			amount: 0,
-			width: 0,
+			amount: "",
+			width: "",
 			care: ""
 		}
 
@@ -118,30 +118,26 @@ class App extends React.Component {
 			<div>
 				<Header />
 				<section>
-					<h2>Enter Your Fabric</h2>
-					<form className="mainForm" onSubmit={this.addToCard}>
-					  	<label htmlFor="brand">Brand:</label>
-					    <input type="text" name="brand" value={this.state.brand} onChange={this.handleChange}/>
+					<div className="fabric-form__container">
+						<h2 className="section-title">Enter Your Fabric</h2>
+						<form className="fabric-form" onSubmit={this.addToCard}>
+						    <input type="text" placeholder="Enter a Brand" name="brand" value={this.state.brand} onChange={this.handleChange}/>
 
-					  	<label htmlFor="type">Type:</label>
-					   	<input type="text" name="type" value={this.state.type} onChange={this.handleChange}/>
-					  	
-					  	<label htmlFor="amount">Amount:</label>
-					   	<input type="number" name="amount" value={this.state.amount} onChange={this.handleChange} />
+						   	<input type="text" placeholder="Enter a Type" name="type" value={this.state.type} onChange={this.handleChange}/>
+						  	
+						   	<input type="number" placeholder="Enter an Amount" name="amount" value={this.state.amount} onChange={this.handleChange} />
 
-					 	<label htmlFor="width">Width:</label>
-					    <input type="number" name="width" value={this.state.width} onChange={this.handleChange}/>
-					  
-					  	<label htmlFor="care">Care Instructions:</label>
-					    <textarea name="care" value={this.state.care} onChange={this.handleChange}></textarea>
+						    <input type="number" placeholder="Enter a Width" name="width" value={this.state.width} onChange={this.handleChange}/>
+						  
+						    <input type="text" name="care" placeholder="Enter Care Instructions" value={this.state.care} onChange={this.handleChange} />
 
-					  
-					    <input type='file' accept='image/*' id='filebutton' onChange={this.photo} />
+						  
+						    <input type='file' accept='image/*' id='filebutton' onChange={this.photo} />
 
+						  <input type="submit" className="btn btn--pink" value="Add a Fabric" onSubmit={this.addToCard} />
+						</form>
+					</div>
 
-
-					  <input type="submit" value="Add a Fabric" onSubmit={this.addToCard} />
-					</form>
 				</section>
 
 				<div>

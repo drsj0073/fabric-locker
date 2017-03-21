@@ -1,3 +1,36 @@
+// Base 
+
+@import "base/normalize";
+@import "base/variables";
+
+// Components 
+@import "components/forms";
+@import "components/header";
+@import "components/nav";
+@import "components/section-title";
+@import "components/btn";
+
+// Global
+
 body {
-	background-color: blue;
+	font-family: 'Nunito', sans-serif;
+	letter-spacing: 1.3px;
+}
+
+a {
+	text-decoration: none;
+}
+
+li {
+	list-style: none;
+}
+
+.fa {
+	font-size: 2rem;
+	color: black;
+}
+
+.cardPhoto {
+	height: 300px;
+	width: 300px;
 }

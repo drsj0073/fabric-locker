@@ -1,0 +1,22 @@
+.main-header{
+	padding: 10px;
+	background: $darkPink;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-wrap: wrap;
+	&__logo {
+		color: $white;
+		font-weight: 400;
+		border: 1px solid $white;
+		border-radius: 5px;
+		padding: 10px;
+	}
+}
+
+
+@media (max-width: 768px) {
+	.main-header__logo {
+		margin: 10px auto;
+	}
+}

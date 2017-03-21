@@ -88,36 +88,33 @@ export default class Header extends React.Component {
 
 	render() {
 		let loginForm = '';
-		if( this.state.formToShow === 'createUser' ) {
+		if( this.state.formToShow === 'createUser nav__link-item' ) {
 			loginForm = (
-			<div>
+			<div className="userForm__container">
+				<h2 className="section-title">Create An Account</h2>
 				<form onSubmit={this.createUser} className="userForm"> 
-					<h2>Create Account</h2>
 
-					<label htmlFor="createEmail">Email:</label>
-				 	<input type="email" name="createEmail" onChange={this.handleChange} />
+				 	<input type="email" placeholder="Enter Your Email" name="createEmail" onChange={this.handleChange} ref={ref => this.createEmail = ref}/>
 
-			 		<label htmlFor="createPassword">Password:</label>
-			 	 	<input type="password" name="createPassword" onChange={this.handleChange} />
+			 	 	<input type="password" name="createPassword" placeholder="Enter Your Password"  onChange={this.handleChange} ref={ref => this.createPassword = ref}/>
 
-			 	 	<label htmlFor="confirmPassword">Confirm Password:</label>
-			 	 	<input type="password" name="confirmPassword" onChange={this.handleChange} />
+			 	 	<input type="password" name="confirmPassword" placeholder="Confirm Your Email"  onChange={this.handleChange} ref={ref => this.confirmPassword = ref}/>
 
-			 	 	<button>Sign Up</button>
+			 	 	<button className="btn btn--pink">Sign Up</button>
 				</form>
 			</div>
 			);
-		} else if( this.state.formToShow === 'loginUser' ) {
+		} else if( this.state.formToShow === 'loginUser nav__link-item' ) {
 			loginForm = (
-			<div>
-				<form onSubmit={this.loginUser} className="userForm"> 
-					<h2>Sign In</h2>
-					<label htmlFor="email">Email:</label>
-				 	<input type="email" name="email" onChange={this.handleChange} ref={ref => this.userEmail = ref}  />
+			<div className="userForm__container">
+				<h2 className="section-title">Login</h2>
 
-			 		<label htmlFor="password">Password:</label>
-			 	 	<input type="password" name="password" onChange={this.handleChange} ref={ref => this.userPassword = ref} />
-			 	 	<button>Sign In</button>
+				<form onSubmit={this.loginUser} className="userForm"> 
+
+				 	<input type="email" placeholder="Enter Your Email" name="email" onChange={this.handleChange} ref={ref => this.userEmail = ref}  />
+
+			 	 	<input type="password" placeholder="Enter Your Password" name="password" onChange={this.handleChange} ref={ref => this.userPassword = ref} />
+			 	 	<button className="btn btn--pink">Sign In</button>
 				</form>
 			</div>
 			);
@@ -125,14 +122,14 @@ export default class Header extends React.Component {
 
 		return (
 			<div>
-				<header>
-					<h2>Fabric Locker</h2>
+				<header className="main-header">
+					<h2 className="main-header__logo">Fabric Locker</h2>
 					<nav>
-						<ul>
-							<li><a href='' onClick={this.showMainForm}>Add Fabric</a></li>
-							<li><a href='' className="createUser" onClick={this.formToShow}> Create Account</a></li>
-							<li><a href='' className="loginUser" onClick={this.formToShow}> Sign In</a></li>
-							<li><a href='' className="signOut" onClick={this.signOut}> Sign Out</a></li>
+						<ul className='nav'>
+							<li><a href='' className="nav__link-item" onClick={this.showMainForm}>Add Fabric</a></li>
+							<li><a href='' className="createUser nav__link-item" onClick={this.formToShow}> Create Account</a></li>
+							<li><a href='' className="loginUser nav__link-item" onClick={this.formToShow}> Sign In</a></li>
+							<li><a href='' className="signOut nav__link-item" onClick={this.signOut}> Sign Out</a></li>
 						</ul>
 					</nav>
 				</header>
