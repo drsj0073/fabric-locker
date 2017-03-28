@@ -1,0 +1,42 @@
+.fabric-box {
+	width: 50%;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: -50%;
+	background: $white;
+	transition: all 0.5s ease;
+	padding: 15px;
+	box-shadow: 0 0 35px rgba(0,0,0,0.2);
+
+	&__title {
+		font-family: 'Montserrat', sans-serif;
+		padding: 10px 0;
+		font-weight: 400;
+	}
+	input {
+		width: 100%;
+		margin-bottom: 25px;
+		border: none;
+		border-bottom: 2px solid $lightPink;
+		padding: 10px;
+	}
+}
+
+@media (min-width: 800px) {
+	.fabric-box {
+		width: 35%;
+		left: -35%;
+	}
+}
+
+@media (max-width: 500px) {
+	.fabric-box {
+		width: 75%;
+		left: -75%;
+	}
+}
+
+.fabric-box.show {
+	left: 0;
+}

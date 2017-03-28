@@ -1,22 +1,29 @@
-.main-header{
-	padding: 10px;
-	background: $darkPink;
+.header {
+	font-family: 'Montserrat', sans-serif;
+	padding: 20px 50px;
 	display: flex;
-	justify-content: space-between;
 	align-items: center;
-	flex-wrap: wrap;
-	&__logo {
-		color: $white;
-		font-weight: 400;
-		border: 1px solid $white;
-		border-radius: 5px;
-		padding: 10px;
+	justify-content: space-between;
+	background-color: #D6797D;
+	color: white;
+
+	&__link {
+	margin: 0 10px;
+	padding: 10px;
+	text-decoration: none;
+	color: white;
 	}
 }
 
+@media (max-width: 545px) {
+	.header {
+		display: flex;
+		flex-direction: column;
 
-@media (max-width: 768px) {
-	.main-header__logo {
-		margin: 10px auto;
+		&__link {
+			border: 1px solid white;
+			display: inline-block;
+			margin: 10px;
+		}
 	}
 }

@@ -20499,25 +20499,17 @@ var _reactDom = require('react-dom');
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
-var _header = require('./components/header.js');
-
-var _header2 = _interopRequireDefault(_header);
-
-var _fabricCard = require('./components/fabricCard.js');
+var _fabricCard = require('./components/fabricCard');
 
 var _fabricCard2 = _interopRequireDefault(_fabricCard);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-// Component imports
-
 
 // Initialize Firebase
 var config = {
@@ -20538,17 +20530,16 @@ var App = function (_React$Component) {
 		var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this));
 
 		_this.state = {
-			items: [],
-			brand: "",
-			type: "",
-			amount: "",
-			width: "",
-			care: ""
+			fabrics: [],
+			loggedin: false
 		};
-
-		_this.showMainForm = _this.showMainForm.bind(_this);
-		_this.addToCard = _this.addToCard.bind(_this);
-		_this.handleChange = _this.handleChange.bind(_this);
+		_this.showSideBar = _this.showSideBar.bind(_this);
+		_this.addFabric = _this.addFabric.bind(_this);
+		_this.removeFabric = _this.removeFabric.bind(_this);
+		_this.showCreate = _this.showCreate.bind(_this);
+		_this.createUser = _this.createUser.bind(_this);
+		_this.showLogin = _this.showLogin.bind(_this);
+		_this.loginUser = _this.loginUser.bind(_this);
 		_this.photo = _this.photo.bind(_this);
 		return _this;
 	}
@@ -20559,72 +20550,58 @@ var App = function (_React$Component) {
 			var _this2 = this;
 
 			firebase.auth().onAuthStateChanged(function (user) {
-				console.log("userrr", user);
 				if (user) {
-					firebase.database().ref().on('value', function (res) {
+					firebase.database().ref('users/' + user.uid + '/fabrics').on('value', function (res) {
 						var userData = res.val();
 						var dataArray = [];
-						for (var objKey in userData) {
-							userData[objKey].key = objKey;
-							dataArray.push(userData[objKey]);
+						for (var objectKey in userData) {
+							userData[objectKey].key = objectKey;
+							dataArray.push(userData[objectKey]);
 						}
 						_this2.setState({
-							items: dataArray
+							fabrics: dataArray,
+							loggedin: true
 						});
+					});
+				} else {
+					_this2.setState({
+						fabrics: [],
+						loggedin: false
 					});
 				}
 			});
 		}
-
-		// ********** Main Form ***********
-
 	}, {
-		key: 'handleChange',
-		value: function handleChange(e) {
-			this.setState(_defineProperty({}, e.target.name, e.target.value));
-		}
-	}, {
-		key: 'showMainForm',
-		value: function showMainForm(e) {
+		key: 'showSideBar',
+		value: function showSideBar(e) {
 			e.preventDefault();
-			console.log('hi!');
-			//this.mainForm.classList.toggle("showMainForm")
+			this.sidebar.classList.toggle("show");
 		}
-
-		// Delete a Card
-
 	}, {
-		key: 'removeCard',
-		value: function removeCard(fabricCardId) {
-			var dbRef = firebase.database().ref(fabricCardId);
-			dbRef.remove();
-		}
-
-		// Add a Card
-
-	}, {
-		key: 'addToCard',
-		value: function addToCard(e) {
+		key: 'addFabric',
+		value: function addFabric(e) {
 			e.preventDefault();
-			var items = {
-				brand: this.state.brand,
-				type: this.state.type,
-				amount: this.state.amount,
-				width: this.state.width,
-				care: this.state.care,
+			var fabric = {
+				brand: this.brandTitle.value,
+				type: this.fabricType.value,
+				amount: this.amountText.value,
+				width: this.widthText.value,
+				care: this.careText.value,
 				photo: this.state.photo
 			};
-			var dbRef = firebase.database().ref();
-			dbRef.push(items);
 
-			this.setState({
-				brand: '',
-				type: '',
-				amount: '',
-				width: '',
-				care: ''
+			var userId = firebase.auth().currentUser.uid;
+			var dbRef = firebase.database().ref('users/' + userId + '/fabrics');
 
-			});
+			dbRef.push(fabric);
+
+			this.brandTitle.value = "";
+			this.fabricType.value = "";
+			this.amountText.value = "";
+			this.widthText.value = "";
+			this.careText.value = "";
+			this.fabricPhoto.value = "";
+			this.showSideBar(e);
 		}
 	}, {
 		key: 'photo',
@@ -20642,44 +20619,262 @@ var App = function (_React$Component) {
 			});
 		}
 	}, {
+		key: 'removeFabric',
+		value: function removeFabric(fabricId) {
+			var userId = firebase.auth().currentUser.uid;
+			var dbRef = firebase.database().ref('users/' + userId + '/fabrics/' + fabricId);
+			dbRef.remove();
+			console.log("whaaaaa");
+		}
+	}, {
+		key: 'showCreate',
+		value: function showCreate(e) {
+			e.preventDefault();
+			this.overlay.classList.toggle('show');
+			this.signup.classList.toggle('show');
+		}
+	}, {
+		key: 'createUser',
+		value: function createUser(e) {
+			var _this4 = this;
+
+			e.preventDefault();
+			var email = this.createEmail.value;
+			var password = this.createPassword.value;
+			var confirm = this.confirmPassword.value;
+			if (password === confirm) {
+				firebase.auth().createUserWithEmailAndPassword(email, password).then(function (res) {
+					_this4.showCreate(e);
+				}).catch(function (err) {
+					alert(err.message);
+				});
+			} else {
+				alert("Passwords must Match");
+			}
+		}
+	}, {
+		key: 'showLogin',
+		value: function showLogin(e) {
+			e.preventDefault();
+			this.overlay.classList.toggle("show");
+			this.login.classList.toggle("show");
+		}
+	}, {
+		key: 'loginUser',
+		value: function loginUser(e) {
+			var _this5 = this;
+
+			e.preventDefault();
+			var email = this.userEmail.value;
+			var password = this.userPassword.value;
+
+			firebase.auth().signInWithEmailAndPassword(email, password).then(function (res) {
+				_this5.showLogin(e);
+			}).catch(function (err) {
+				alert(err.message);
+			});
+		}
+	}, {
+		key: 'logOut',
+		value: function logOut() {
+			firebase.auth().signOut();
+		}
+	}, {
+		key: 'renderCards',
+		value: function renderCards() {
+			var _this6 = this;
+
+			if (this.state.loggedin) {
+				return this.state.fabrics.map(function (fabric, i) {
+					return _react2.default.createElement(_fabricCard2.default, { fabric: fabric, key: 'fabric-' + i, removeFabric: _this6.removeFabric });
+				}).reverse();
+			} else {
+				return _react2.default.createElement(
+					'div',
+					null,
+					_react2.default.createElement(
+						'h2',
+						null,
+						'Login to add a fabric!'
+					)
+				);
+			}
+		}
+	}, {
 		key: 'render',
 		value: function render() {
-			var _this4 = this;
+			var _this7 = this;
 
 			return _react2.default.createElement(
 				'div',
 				null,
-				_react2.default.createElement(_header2.default, null),
 				_react2.default.createElement(
-					'section',
-					null,
+					'header',
+					{ className: 'header' },
 					_react2.default.createElement(
-						'h2',
-						{ className: 'section-title' },
-						'Enter Your Fabric'
+						'h1',
+						null,
+						'Fabric Locker'
 					),
 					_react2.default.createElement(
-						'div',
-						{ className: 'fabric-form__container' },
+						'nav',
+						null,
+						function () {
+							if (_this7.state.loggedin) {
+								return _react2.default.createElement(
+									'span',
+									null,
+									_react2.default.createElement(
+										'a',
+										{ href: '', onClick: _this7.showSideBar, className: 'header__link' },
+										'Add New Fabric'
+									),
+									_react2.default.createElement(
+										'a',
+										{ href: '', onClick: _this7.logOut, className: 'header__link' },
+										'Logout'
+									)
+								);
+							} else {
+								return _react2.default.createElement(
+									'span',
+									null,
+									_react2.default.createElement(
+										'a',
+										{ href: '', onClick: _this7.showCreate, className: 'header__link' },
+										' Create Account'
+									),
+									_react2.default.createElement(
+										'a',
+										{ href: '', onClick: _this7.showLogin, className: 'header__link' },
+										'Login'
+									)
+								);
+							}
+						}()
+					)
+				),
+				_react2.default.createElement('div', { className: 'overlay', ref: function ref(_ref) {
+						return _this7.overlay = _ref;
+					} }),
+				_react2.default.createElement(
+					'section',
+					{ className: 'fabrics' },
+					this.renderCards()
+				),
+				_react2.default.createElement(
+					'aside',
+					{ className: 'fabric-box', ref: function ref(_ref8) {
+							return _this7.sidebar = _ref8;
+						} },
+					_react2.default.createElement(
+						'form',
+						{ onSubmit: this.addFabric },
 						_react2.default.createElement(
-							'form',
-							{ className: 'fabric-form', onSubmit: this.addToCard },
-							_react2.default.createElement('input', { type: 'text', placeholder: 'Enter a Brand', name: 'brand', value: this.state.brand, onChange: this.handleChange }),
-							_react2.default.createElement('input', { type: 'text', placeholder: 'Enter a Type', name: 'type', value: this.state.type, onChange: this.handleChange }),
-							_react2.default.createElement('input', { type: 'number', placeholder: 'Enter an Amount', name: 'amount', value: this.state.amount, onChange: this.handleChange }),
-							_react2.default.createElement('input', { type: 'number', placeholder: 'Enter a Width', name: 'width', value: this.state.width, onChange: this.handleChange }),
-							_react2.default.createElement('input', { type: 'text', name: 'care', placeholder: 'Enter Care Instructions', value: this.state.care, onChange: this.handleChange }),
-							_react2.default.createElement('input', { type: 'file', accept: 'image/*', id: 'filebutton', onChange: this.photo }),
-							_react2.default.createElement('input', { type: 'submit', className: 'btn btn--pink', value: 'Add a Fabric', onSubmit: this.addToCard })
+							'h3',
+							{ className: 'fabric-box__title' },
+							'Add New Fabric'
+						),
+						_react2.default.createElement(
+							'div',
+							{ className: 'close-btn', onClick: this.showSideBar },
+							_react2.default.createElement('i', { className: 'fa fa-times modal__exit' })
+						),
+						_react2.default.createElement('input', { type: 'text', name: 'brand-title', placeholder: 'Brand:', ref: function ref(_ref2) {
+								return _this7.brandTitle = _ref2;
+							} }),
+						_react2.default.createElement('input', { type: 'text', name: 'fabric-type', placeholder: 'Type:', ref: function ref(_ref3) {
+								return _this7.fabricType = _ref3;
+							} }),
+						_react2.default.createElement('input', { type: 'text', name: 'amount-text', placeholder: 'Amount:', ref: function ref(_ref4) {
+								return _this7.amountText = _ref4;
+							} }),
+						_react2.default.createElement('input', { type: 'text', name: 'width-text', placeholder: 'Width', ref: function ref(_ref5) {
+								return _this7.widthText = _ref5;
+							} }),
+						_react2.default.createElement('input', { type: 'text', name: 'care-text', placeholder: 'Care Instructions:', ref: function ref(_ref6) {
+								return _this7.careText = _ref6;
+							} }),
+						_react2.default.createElement('input', { type: 'file', accept: 'image/*', id: 'filebutton', onChange: this.photo, ref: function ref(_ref7) {
+								return _this7.fabricPhoto = _ref7;
+							}, className: 'form__photo' }),
+						_react2.default.createElement('input', { type: 'submit', value: 'Add New Fabric', className: 'modal__button' })
+					)
+				),
+				_react2.default.createElement(
+					'div',
+					{ className: 'login modal', ref: function ref(_ref11) {
+							return _this7.login = _ref11;
+						} },
+					_react2.default.createElement(
+						'div',
+						{ className: 'close', onClick: this.showLogin },
+						_react2.default.createElement('i', { className: 'fa fa-times modal__exit' })
+					),
+					_react2.default.createElement(
+						'form',
+						{ action: '', onSubmit: this.loginUser },
+						_react2.default.createElement(
+							'div',
+							{ className: 'modal__form' },
+							_react2.default.createElement('input', { type: 'text', className: 'modal__input', name: 'email', placeholder: 'Email:', ref: function ref(_ref9) {
+									return _this7.userEmail = _ref9;
+								} })
+						),
+						_react2.default.createElement(
+							'div',
+							{ className: 'modal__form' },
+							_react2.default.createElement('input', { type: 'password', className: 'modal__input', name: 'password', placeholder: 'Password:', ref: function ref(_ref10) {
+									return _this7.userPassword = _ref10;
+								} })
+						),
+						_react2.default.createElement(
+							'div',
+							{ className: 'modal__form' },
+							_react2.default.createElement('input', { type: 'submit', value: 'Login', className: 'modal__button' })
 						)
 					)
 				),
 				_react2.default.createElement(
 					'div',
-					null,
-					this.state.items.map(function (item, i) {
-						return _react2.default.createElement(_fabricCard2.default, { data: item, key: 'item-' + i, removeCard: _this4.removeCard });
-					})
+					{ className: 'signup modal', ref: function ref(_ref15) {
+							return _this7.signup = _ref15;
+						} },
+					_react2.default.createElement(
+						'div',
+						{ className: 'close', onClick: this.showCreate },
+						_react2.default.createElement('i', { className: 'fa fa-times modal__exit' })
+					),
+					_react2.default.createElement(
+						'form',
+						{ action: '', onSubmit: this.createUser },
+						_react2.default.createElement(
+							'div',
+							{ className: 'modal__form' },
+							_react2.default.createElement('input', { type: 'text', name: 'createEmail', className: 'modal__input', placeholder: 'Email:', ref: function ref(_ref12) {
+									return _this7.createEmail = _ref12;
+								} })
+						),
+						_react2.default.createElement(
+							'div',
+							{ className: 'modal__form' },
+							_react2.default.createElement('input', { type: 'password', name: 'createPassword', className: 'modal__input', placeholder: 'Create Password:', ref: function ref(_ref13) {
+									return _this7.createPassword = _ref13;
+								} })
+						),
+						_react2.default.createElement(
+							'div',
+							{ className: 'modal__form' },
+							_react2.default.createElement('input', { type: 'password', name: 'confirmPassword', className: 'modal__input', placeholder: 'Confirm Password:', ref: function ref(_ref14) {
+									return _this7.confirmPassword = _ref14;
+								} })
+						),
+						_react2.default.createElement(
+							'div',
+							{ className: 'modal__form' },
+							_react2.default.createElement('input', { type: 'submit', value: 'Create Account', className: 'modal__button' })
+						)
+					)
 				)
 			);
 		}
@@ -20690,7 +20885,7 @@ var App = function (_React$Component) {
 
 _reactDom2.default.render(_react2.default.createElement(App, null), document.getElementById('app'));
 
-},{"./components/fabricCard.js":179,"./components/header.js":180,"react":177,"react-dom":26}],179:[function(require,module,exports){
+},{"./components/fabricCard":179,"react":177,"react-dom":26}],179:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -20720,24 +20915,26 @@ var FabricCard = function (_React$Component) {
 		var _this = _possibleConstructorReturn(this, (FabricCard.__proto__ || Object.getPrototypeOf(FabricCard)).call(this));
 
 		_this.state = {
-			edit: false,
-			card: {}
+			editing: false,
+			fabric: {}
 		};
-		_this.saveChanges = _this.saveChanges.bind(_this);
+		_this.save = _this.save.bind(_this);
 		return _this;
 	}
 
 	_createClass(FabricCard, [{
-		key: "saveChanges",
-		value: function saveChanges(e) {
+		key: "save",
+		value: function save(e) {
 			e.preventDefault();
-			var dbRef = firebase.database().ref(this.props.data.key);
+
+			var userId = firebase.auth().currentUser.uid;
+			var dbRef = firebase.database().ref("users/" + userId + "/fabrics/" + this.props.fabric.key);
 
 			dbRef.update({
-				brand: this.brandText.value,
-				type: this.typeText.value,
-				amount: this.amountNumber.value,
-				width: this.widthNumber.value,
+				brand: this.brandTitle.value,
+				type: this.fabricType.value,
+				amount: this.amountText.value,
+				width: this.widthText.value,
 				care: this.careText.value
 			});
 
@@ -20750,70 +20947,112 @@ var FabricCard = function (_React$Component) {
 		value: function render() {
 			var _this2 = this;
 
-			var editCard = _react2.default.createElement(
-				"form",
+			var editingTemp = _react2.default.createElement(
+				"span",
 				null,
 				_react2.default.createElement(
-					"h3",
+					"h4",
 					null,
-					this.props.data.brand
+					this.props.fabric.brand
 				),
 				_react2.default.createElement(
-					"h3",
+					"p",
 					null,
-					this.props.data.type
+					_react2.default.createElement(
+						"span",
+						{ className: "fabricCard__heading" },
+						"Type:"
+					),
+					" ",
+					this.props.fabric.type
 				),
 				_react2.default.createElement(
-					"h3",
+					"p",
 					null,
-					this.props.data.amount
+					_react2.default.createElement(
+						"span",
+						{ className: "fabricCard__heading" },
+						"Amount:"
+					),
+					"  ",
+					this.props.fabric.amount
 				),
 				_react2.default.createElement(
-					"h3",
+					"p",
 					null,
-					this.props.data.width
+					_react2.default.createElement(
+						"span",
+						{ className: "fabricCard__heading" },
+						"Width:"
+					),
+					" ",
+					this.props.fabric.width
 				),
 				_react2.default.createElement(
-					"h3",
+					"p",
 					null,
-					this.props.data.care
+					_react2.default.createElement(
+						"span",
+						{ className: "fabricCard__heading" },
+						"Care:"
+					),
+					"  ",
+					this.props.fabric.care
 				)
 			);
-
 			if (this.state.editing) {
-				editCard = _react2.default.createElement(
+				editingTemp = _react2.default.createElement(
 					"form",
-					{ onSubmit: this.saveChanges },
-					_react2.default.createElement("input", { type: "text", defaultValue: this.props.data.brand, name: "brand", ref: function ref(_ref) {
-							return _this2.brandText = _ref;
-						} }),
-					_react2.default.createElement("input", { type: "text", defaultValue: this.props.data.type, name: "type", ref: function ref(_ref2) {
-							return _this2.typeText = _ref2;
-						} }),
-					_react2.default.createElement("input", { type: "number", defaultValue: this.props.data.amount, name: "amount", ref: function ref(_ref3) {
-							return _this2.amountNumber = _ref3;
-						} }),
-					_react2.default.createElement("input", { type: "number", defaultValue: this.props.data.number, name: "width", ref: function ref(_ref4) {
-							return _this2.widthNumber = _ref4;
-						} }),
-					_react2.default.createElement("input", { type: "text", defaultValue: this.props.data.care, name: "care", ref: function ref(_ref5) {
-							return _this2.careText = _ref5;
-						} }),
-					_react2.default.createElement("input", { type: "submit", value: "done editing!" })
+					{ onSubmit: this.save },
+					_react2.default.createElement(
+						"div",
+						{ className: "modal__form" },
+						_react2.default.createElement("input", { type: "text", defaultValue: this.props.fabric.brand, className: "modal__input", name: "brand-title", ref: function ref(_ref) {
+								return _this2.brandTitle = _ref;
+							} })
+					),
+					_react2.default.createElement(
+						"div",
+						{ className: "modal__form" },
+						_react2.default.createElement("input", { type: "text", defaultValue: this.props.fabric.type, className: "modal__input", name: "fabric-type", ref: function ref(_ref2) {
+								return _this2.fabricType = _ref2;
+							} })
+					),
+					_react2.default.createElement(
+						"div",
+						{ className: "modal__form" },
+						_react2.default.createElement("input", { type: "text", defaultValue: this.props.fabric.amount, className: "modal__input", name: "amount-text", ref: function ref(_ref3) {
+								return _this2.amountText = _ref3;
+							} })
+					),
+					_react2.default.createElement(
+						"div",
+						{ className: "modal__form" },
+						_react2.default.createElement("input", { type: "text", defaultValue: this.props.fabric.width, className: "modal__input", name: "width-text", ref: function ref(_ref4) {
+								return _this2.widthText = _ref4;
+							} })
+					),
+					_react2.default.createElement(
+						"div",
+						{ className: "modal__form" },
+						_react2.default.createElement("input", { type: "text", defaultValue: this.props.fabric.care, className: "modal__input", name: "care-text", ref: function ref(_ref5) {
+								return _this2.careText = _ref5;
+							} })
+					),
+					_react2.default.createElement("input", { type: "submit", value: "Done editing!", className: "modal__button" })
 				);
 			}
-
 			return _react2.default.createElement(
 				"div",
-				null,
+				{ className: "fabricCard" },
 				_react2.default.createElement("i", { className: "fa fa-edit", onClick: function onClick() {
 						return _this2.setState({ editing: true });
 					} }),
 				_react2.default.createElement("i", { className: "fa fa-times", onClick: function onClick() {
-						return _this2.props.removeCard(_this2.props.data.key);
+						return _this2.props.removeFabric(_this2.props.fabric.key);
 					} }),
-				editCard,
-				_react2.default.createElement("img", { className: "cardPhoto", src: "" + this.props.data.photo })
+				editingTemp,
+				_react2.default.createElement("img", { className: "fabricPhoto", src: "" + this.props.fabric.photo })
 			);
 		}
 	}]);
@@ -20822,242 +21061,5 @@ var FabricCard = function (_React$Component) {
 }(_react2.default.Component);
 
 exports.default = FabricCard;
-
-},{"react":177}],180:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-	value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _react = require('react');
-
-var _react2 = _interopRequireDefault(_react);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var Header = function (_React$Component) {
-	_inherits(Header, _React$Component);
-
-	function Header() {
-		_classCallCheck(this, Header);
-
-		var _this = _possibleConstructorReturn(this, (Header.__proto__ || Object.getPrototypeOf(Header)).call(this));
-
-		_this.state = {
-			formToShow: '',
-			email: '',
-			password: '',
-			confirm: ''
-		};
-		_this.formToShow = _this.formToShow.bind(_this);
-		_this.createUser = _this.createUser.bind(_this);
-		_this.loginUser = _this.loginUser.bind(_this);
-		_this.handleChange = _this.handleChange.bind(_this);
-		_this.signOut = _this.signOut.bind(_this);
-		return _this;
-	}
-
-	_createClass(Header, [{
-		key: 'formToShow',
-		value: function formToShow(e) {
-			e.preventDefault();
-			this.setState({
-				formToShow: e.target.className
-			});
-		}
-	}, {
-		key: 'handleChange',
-		value: function handleChange(e) {
-			this.setState(_defineProperty({}, e.target.name, e.target.value));
-		}
-	}, {
-		key: 'signOut',
-		value: function signOut(e) {
-			e.preventDefault();
-			firebase.auth().signOut().then(function () {
-				console.log('Signed Out');
-			}, function (error) {
-				console.error('Sign Out Error', error);
-			});
-		}
-
-		// ********** Create Account Form ***********
-
-	}, {
-		key: 'createUser',
-		value: function createUser(e) {
-			e.preventDefault();
-
-			var email = this.createEmail.value;
-			var password = this.createPassword.value;
-			var confirm = this.confirmPassword.value;
-
-			this.createEmail.value = "";
-			this.createPassword.value = "";
-			this.confirmPassword.value = "";
-
-			if (password === confirm) {
-				firebase.auth().createUserWithEmailAndPassword(email, password).then(function (data) {
-					console.log(data);
-				}).catch(function (error) {
-					console.log(error.code);
-					console.log(error.message);
-				});
-			}
-		}
-
-		// ********** Login Form ***********
-
-	}, {
-		key: 'loginUser',
-		value: function loginUser(e) {
-			e.preventDefault();
-			var email = this.userEmail.value;
-			var password = this.userPassword.value;
-
-			this.userEmail.value = '';
-			this.userPassword.value = '';
-
-			firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password).then(function (data) {
-				console.log(data);
-			});
-		}
-	}, {
-		key: 'render',
-		value: function render() {
-			var _this2 = this;
-
-			var loginForm = '';
-			if (this.state.formToShow === 'createUser nav__link-item') {
-				loginForm = _react2.default.createElement(
-					'div',
-					{ className: 'userForm__container' },
-					_react2.default.createElement(
-						'h2',
-						{ className: 'section-title' },
-						'Create An Account'
-					),
-					_react2.default.createElement(
-						'form',
-						{ onSubmit: this.createUser, className: 'userForm' },
-						_react2.default.createElement('input', { type: 'email', placeholder: 'Enter Your Email', name: 'createEmail', onChange: this.handleChange, ref: function ref(_ref) {
-								return _this2.createEmail = _ref;
-							} }),
-						_react2.default.createElement('input', { type: 'password', name: 'createPassword', placeholder: 'Enter Your Password', onChange: this.handleChange, ref: function ref(_ref2) {
-								return _this2.createPassword = _ref2;
-							} }),
-						_react2.default.createElement('input', { type: 'password', name: 'confirmPassword', placeholder: 'Confirm Your Email', onChange: this.handleChange, ref: function ref(_ref3) {
-								return _this2.confirmPassword = _ref3;
-							} }),
-						_react2.default.createElement(
-							'button',
-							{ className: 'btn btn--pink' },
-							'Sign Up'
-						)
-					)
-				);
-			} else if (this.state.formToShow === 'loginUser nav__link-item') {
-				loginForm = _react2.default.createElement(
-					'div',
-					{ className: 'userForm__container' },
-					_react2.default.createElement(
-						'h2',
-						{ className: 'section-title' },
-						'Login'
-					),
-					_react2.default.createElement(
-						'form',
-						{ onSubmit: this.loginUser, className: 'userForm' },
-						_react2.default.createElement('input', { type: 'email', placeholder: 'Enter Your Email', name: 'email', onChange: this.handleChange, ref: function ref(_ref4) {
-								return _this2.userEmail = _ref4;
-							} }),
-						_react2.default.createElement('input', { type: 'password', placeholder: 'Enter Your Password', name: 'password', onChange: this.handleChange, ref: function ref(_ref5) {
-								return _this2.userPassword = _ref5;
-							} }),
-						_react2.default.createElement(
-							'button',
-							{ className: 'btn btn--pink' },
-							'Sign In'
-						)
-					)
-				);
-			}
-
-			return _react2.default.createElement(
-				'div',
-				null,
-				_react2.default.createElement(
-					'header',
-					{ className: 'main-header' },
-					_react2.default.createElement(
-						'h2',
-						{ className: 'main-header__logo' },
-						'Fabric Locker'
-					),
-					_react2.default.createElement(
-						'nav',
-						null,
-						_react2.default.createElement(
-							'ul',
-							{ className: 'nav' },
-							_react2.default.createElement(
-								'li',
-								null,
-								_react2.default.createElement(
-									'a',
-									{ href: '', className: 'nav__link-item', onClick: this.showMainForm },
-									'Add Fabric'
-								)
-							),
-							_react2.default.createElement(
-								'li',
-								null,
-								_react2.default.createElement(
-									'a',
-									{ href: '', className: 'createUser nav__link-item', onClick: this.formToShow },
-									' Create Account'
-								)
-							),
-							_react2.default.createElement(
-								'li',
-								null,
-								_react2.default.createElement(
-									'a',
-									{ href: '', className: 'loginUser nav__link-item', onClick: this.formToShow },
-									' Sign In'
-								)
-							),
-							_react2.default.createElement(
-								'li',
-								null,
-								_react2.default.createElement(
-									'a',
-									{ href: '', className: 'signOut nav__link-item', onClick: this.signOut },
-									' Sign Out'
-								)
-							)
-						)
-					)
-				),
-				loginForm
-			);
-		}
-	}]);
-
-	return Header;
-}(_react2.default.Component);
-
-exports.default = Header;
 
 },{"react":177}]},{},[178]);
