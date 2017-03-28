@@ -158,6 +158,10 @@ legend, button::-moz-focus-inner, input::-moz-focus-inner {
       display: inline-block;
       margin: 10px; } }
 
+@media (max-width: 400px) {
+  .header {
+    padding: 5px; } }
+
 .modal {
   width: 90%;
   padding: 40px;
@@ -220,14 +224,15 @@ legend, button::-moz-focus-inner, input::-moz-focus-inner {
   background: rgba(0, 0, 0, 0.4); }
 
 .fabric-box {
-  width: 50%;
+  width: 40%;
   position: absolute;
-  top: 0;
-  bottom: 0;
+  top: -50%;
   left: -50%;
+  transform: translate(-50%, -50%);
   background: #FDFDFE;
   transition: all 0.5s ease;
   padding: 15px;
+  z-index: 10;
   box-shadow: 0 0 35px rgba(0, 0, 0, 0.2); }
   .fabric-box__title {
     font-family: 'Montserrat', sans-serif;
@@ -240,18 +245,17 @@ legend, button::-moz-focus-inner, input::-moz-focus-inner {
     border-bottom: 2px solid #D78C93;
     padding: 10px; }
 
-@media (min-width: 800px) {
+@media (max-width: 800px) {
   .fabric-box {
-    width: 35%;
-    left: -35%; } }
+    width: 80%; } }
 
 @media (max-width: 500px) {
   .fabric-box {
-    width: 75%;
-    left: -75%; } }
+    width: 75%; } }
 
 .fabric-box.show {
-  left: 0; }
+  top: 50%;
+  left: 50%; }
 
 .fabricCard {
   background: white;
@@ -267,13 +271,14 @@ legend, button::-moz-focus-inner, input::-moz-focus-inner {
     font-size: 2rem;
     font-family: 'Montserrat', sans-serif;
     position: relative;
-    width: 200px;
+    max-width: 350px;
     text-align: center;
     margin: 15px auto;
     padding: 10px;
     border-bottom: 3px solid #D78C93; }
   .fabricCard p {
     font-size: 1.2rem;
+    max-width: 300px;
     line-height: 1.3;
     margin: 10px 0; }
   .fabricCard input {
@@ -288,7 +293,7 @@ body {
   font-family: 'Raleway', sans-serif; }
 
 img {
-  width: 300px;
+  max-width: 350px;
   height: 300px; }
 
 .fa-times,

@@ -60,6 +60,7 @@ class App extends React.Component {
 		this.sidebar.classList.toggle("show");
 	}
 
+
 	addFabric(e) {
 		e.preventDefault(); 
 		const fabric = {
@@ -188,6 +189,8 @@ class App extends React.Component {
 											<a href="" onClick={this.showSideBar} className="header__link">Add New Fabric</a>
 											<a href="" onClick={this.logOut} className="header__link">Logout</a>
 										</span>	
+
+
 									)	
 								}
 								else {
@@ -207,7 +210,6 @@ class App extends React.Component {
 				<section className="fabrics">
 					{this.renderCards()}
 				</section>
-
 
 				<aside className="fabric-box" ref={ref => this.sidebar = ref}>
 					<form onSubmit={this.addFabric}> 

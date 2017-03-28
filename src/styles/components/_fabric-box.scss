@@ -1,12 +1,13 @@
 .fabric-box {
-	width: 50%;
+	width: 40%;
 	position: absolute;
-	top: 0;
-	bottom: 0;
+	top: -50%;
 	left: -50%;
+	transform: translate(-50%,-50%);
 	background: $white;
 	transition: all 0.5s ease;
 	padding: 15px;
+	z-index: 10;
 	box-shadow: 0 0 35px rgba(0,0,0,0.2);
 
 	&__title {
@@ -23,20 +24,22 @@
 	}
 }
 
-@media (min-width: 800px) {
+@media (max-width: 800px) {
 	.fabric-box {
-		width: 35%;
-		left: -35%;
+		width: 80%;
+
 	}
 }
 
 @media (max-width: 500px) {
 	.fabric-box {
 		width: 75%;
-		left: -75%;
+
 	}
 }
 
 .fabric-box.show {
-	left: 0;
+	top: 50%;
+	left: 50%;
+	// transform: translate(-50%,-50%);
 }
